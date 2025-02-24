@@ -17,6 +17,9 @@ const createWindow = () => {
     },
   });
 
+  console.log("MAIN_WINDOW_VITE_DEV_SERVER_URL",MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  console.log(MAIN_WINDOW_VITE_NAME);
+
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
@@ -27,6 +30,8 @@ const createWindow = () => {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
+
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -52,3 +57,22 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+app.whenReady().then(() => {
+  startBackend(); 
+})
+
+// 启动redis解析
+import {spawn} from 'child_process'
+function startBackend(){
+  const backend = spawn('bin/grm', ['srv','run'], {
+    stdio: 'inherit',
+    // shell: true
+  });
+
+  backend.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+  });
+}
+
+
